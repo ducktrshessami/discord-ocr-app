@@ -9,7 +9,7 @@ const activities: GatewayActivityUpdateData[] = [
     {
         type: ActivityType.Custom,
         name: "_",
-        state: "Having a bad time"
+        state: "Reading the tea leaves"
     }
 ];
 
