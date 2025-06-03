@@ -18,14 +18,14 @@
   "dependencies": {
     "@discordjs/core": "^2.1.0",
     "tesseract.js": "^6.0.1",
-    "undici": "^7.8.0"
+    "undici": "^7.10.0"
   },
   "optionalDependencies": {
     "bufferutil": "^4.0.9",
     "zlib-sync": "^0.1.9"
   },
   "devDependencies": {
-    "@types/node": "^22.15.3",
+    "@types/node": "^22.15.29",
     "dotenv": "^16.5.0",
     "minify": "^9.2.0",
     "typescript": "^5.8.3"
