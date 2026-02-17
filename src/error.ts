@@ -7,7 +7,8 @@ class CustomError extends Error {
     }
 }
 
-export class CommandOptionResolutionError extends CustomError { }
+export class ModalFieldResolutionError extends CustomError { }
+export class ComponentResolutionError extends CustomError { }
 export class HTTPError extends CustomError {
     constructor(statusCode: number) {
         super(`${statusCode} ${STATUS_CODES[statusCode]}`);
