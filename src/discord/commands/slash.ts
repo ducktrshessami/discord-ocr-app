@@ -1,15 +1,18 @@
 import {
+    API,
     APIChatInputApplicationCommandInteraction,
     ApplicationCommandOptionType,
     ApplicationCommandType,
     ApplicationIntegrationType,
+    ComponentType,
     InteractionContextType,
+    InteractionType,
     MessageFlags,
     RESTPostAPIApplicationCommandsJSONBody,
     ToEventProps
 } from "@discordjs/core";
+import { ApplicationCommandOptions } from "discord-data-resolvers";
 import { ocrFromURLs } from "../utils/ocr.js";
-import { ApplicationCommandOptions } from "../utils/options.js";
 
 export const data: RESTPostAPIApplicationCommandsJSONBody = {
     type: ApplicationCommandType.ChatInput,
@@ -25,6 +28,24 @@ export const data: RESTPostAPIApplicationCommandsJSONBody = {
         InteractionContextType.PrivateChannel
     ],
     options: [
+        {
+            type: ApplicationCommandOptionType.Subcommand,
+            name: "url",
+            description: "Recognize text from a URL",
+            options: [
+                {
+                    type: ApplicationCommandOptionType.String,
+                    name: "url",
+                    description: "URL to recognize text from",
+                    required: true
+                },
+                {
+                    type: ApplicationCommandOptionType.Boolean,
+                    name: "show",
+                    description: "Show the results. Defaults to false"
+                }
+            ]
+        },
         {
             type: ApplicationCommandOptionType.Subcommand,
             name: "image",
@@ -45,27 +66,47 @@ export const data: RESTPostAPIApplicationCommandsJSONBody = {
         },
         {
             type: ApplicationCommandOptionType.Subcommand,
-            name: "url",
-            description: "Recognize text from a URL",
-            options: [
-                {
-                    type: ApplicationCommandOptionType.String,
-                    name: "url",
-                    description: "URL to recognize text from",
-                    required: true
-                },
-                {
-                    type: ApplicationCommandOptionType.Boolean,
-                    name: "show",
-                    description: "Show the results. Defaults to false"
-                }
-            ]
+            name: "bulk-image",
+            description: "Recognize text from multiple images",
+            options: [{
+                type: ApplicationCommandOptionType.Boolean,
+                name: "show",
+                description: "Show the results. Defaults to false"
+            }]
         }
     ]
 };
 
-export async function callback({ api, data: interaction }: ToEventProps<APIChatInputApplicationCommandInteraction>): Promise<void> {
-    const options = new ApplicationCommandOptions(interaction.data.options);
+async function bulkCallback(
+    api: API,
+    interaction: APIChatInputApplicationCommandInteraction,
+    options: ApplicationCommandOptions<InteractionType.ApplicationCommand>
+): Promise<void> {
+    const show = options.get({
+        type: ApplicationCommandOptionType.Boolean,
+        name: "show"
+    });
+    await api.interactions.createModal(interaction.id, interaction.token, {
+        custom_id: `bulk-image|${Number(show?.value ?? false)}`,
+        title: "Upload images",
+        components: [{
+            type: ComponentType.Label,
+            label: "Images",
+            component: {
+                type: ComponentType.FileUpload,
+                custom_id: "bulk-image-input",
+                required: true,
+                max_values: 10
+            }
+        }]
+    });
+}
+
+async function defaultCallback(
+    api: API,
+    interaction: APIChatInputApplicationCommandInteraction,
+    options: ApplicationCommandOptions<InteractionType.ApplicationCommand>
+): Promise<void> {
     let url: string;
     if (options.subcommand === "image") {
         const image = options.get({
@@ -94,4 +135,12 @@ export async function callback({ api, data: interaction }: ToEventProps<APIChatI
     await api.interactions.editReply(process.env.DISCORD_CLIENT_ID!, interaction.token, {
         files: [{ name, data }]
     });
+}
+
+export async function callback({ api, data: interaction }: ToEventProps<APIChatInputApplicationCommandInteraction>): Promise<void> {
+    const options = new ApplicationCommandOptions(interaction.data.options);
+    switch (options.subcommand) {
+        case "bulk-image": return bulkCallback(api, interaction, options);
+        default: return defaultCallback(api, interaction, options);
+    }
 }
