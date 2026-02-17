@@ -1,7 +1,3 @@
-import dotenv from "./dotenv.js";
-
-await dotenv();
-
 export const PRESENCE_INTERVAL = envInt("PRESENCE_INTERVAL", 1800000);
 export const FETCH_RETRY_LIMIT = envInt("FETCH_RETRY_LIMIT", 5);
 export const FETCH_RETRY_DELAY = envInt("FETCH_RETRY_DELAY", 1000);
