@@ -1,14 +1,8 @@
 import { Collection } from "@discordjs/collection";
-import {
-    APIApplicationCommandAutocompleteInteraction,
-    APIApplicationCommandInteraction,
-    RESTPostAPIApplicationCommandsJSONBody,
-    ToEventProps
-} from "@discordjs/core";
-import { Awaitable } from "@discordjs/util";
 import { readdirSync } from "fs";
 import { basename } from "path";
 import { fileURLToPath } from "url";
+import { Command } from "../utils/interactions.js";
 
 const indexBasename = basename(import.meta.url);
 const commands = new Collection<string, Command>(
@@ -27,9 +21,3 @@ const commands = new Collection<string, Command>(
     )
 );
 export default commands;
-
-interface Command<Interaction extends APIApplicationCommandInteraction = APIApplicationCommandInteraction> {
-    data: RESTPostAPIApplicationCommandsJSONBody;
-    autocomplete?(payload: ToEventProps<APIApplicationCommandAutocompleteInteraction>): Awaitable<void>;
-    callback(payload: ToEventProps<Interaction>): Awaitable<void>;
-}

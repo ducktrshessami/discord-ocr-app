@@ -2,19 +2,17 @@ import {
     ApplicationCommandType,
     Client,
     GatewayDispatchEvents,
-    InteractionContextType
+    InteractionContextType,
+    InteractionType
 } from "@discordjs/core";
 import { REST } from "@discordjs/rest";
 import { WebSocketManager, WebSocketShardEvents } from "@discordjs/ws";
 import { isGuildInteraction } from "discord-api-types/utils";
 import { PRESENCE_INTERVAL } from "../constants.js";
 import commands from "./commands/index.js";
+import modals from "./modals/index.js";
 import { getPresence } from "./presence.js";
-import {
-    isApplicationCommandInteraction,
-    isAutocompleteInteraction,
-    isCommandBasedInteraction
-} from "./utils/interactions.js";
+import { findAsync, isCommandBasedInteraction, isInteractionType } from "./utils/interactions.js";
 
 const rest = new REST()
     .setToken(process.env.DISCORD_TOKEN!);
@@ -49,13 +47,20 @@ const client = new Client({ rest, gateway })
                         command.data.contexts?.some(context => context !== InteractionContextType.Guild)
                     )
                 ) {
-                    if (isApplicationCommandInteraction(payload)) {
+                    if (isInteractionType(payload, InteractionType.ApplicationCommand)) {
                         console.log(`[discord] ${userId} used ${ApplicationCommandType[payload.data.data.type]} command ${payload.data.data.name}`);
-                        await command.callback(payload);
+                        await command.callback(payload, client);
                     }
-                    else if (isAutocompleteInteraction(payload) && command.autocomplete) {
+                    else if (isInteractionType(payload, InteractionType.ApplicationCommandAutocomplete) && command.autocomplete) {
                         await command.autocomplete(payload);
                     }
+                }
+            }
+            else if (isInteractionType(payload, InteractionType.ModalSubmit)) {
+                const modal = await findAsync(modals, async modal => await modal.test(payload));
+                if (modal) {
+                    console.log(`[discord] ${userId} submitted modal ${payload.data.data.custom_id}`);
+                    await modal.callback(payload, client);
                 }
             }
         }
