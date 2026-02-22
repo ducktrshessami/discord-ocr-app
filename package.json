@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "@discordjs/core": "^2.4.0",
-    "discord-command-options": "ducktrshessami/discord-command-options#v0.2.0",
+    "discord-data-resolvers": "ducktrshessami/discord-data-resolvers#v0.3.0",
     "tesseract.js": "^7.0.0",
     "undici": "^7.22.0"
   },
