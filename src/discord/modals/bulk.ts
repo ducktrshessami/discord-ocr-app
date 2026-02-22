@@ -11,12 +11,24 @@ export async function callback({ api, data: interaction }: ToEventProps<APIModal
     const match = interaction.data.custom_id.match(ModalCustomIDPattern);
     await api.interactions.defer(interaction.id, interaction.token, { flags: !parseInt(match!.groups!.show) ? MessageFlags.Ephemeral : undefined });
     const fields = new ModalSubmitFields(interaction.data.components);
-    const input = fields.get({
+    const inputFiles = fields.get({
         type: ComponentType.FileUpload,
-        customId: "bulk-image-input",
-        required: true
+        customId: "bulk-image-input"
     });
-    const results = await ocrFromURLs(input.values.map(id => interaction.data.resolved!.attachments![id].url));
+    const inputUrls = fields.get({
+        type: ComponentType.TextInput,
+        customId: "bulk-url-input"
+    });
+    const imageUrls: string[] = [];
+    if (inputFiles) {
+        for (const attachmentId of inputFiles.values) {
+            imageUrls.push(interaction.data.resolved!.attachments![attachmentId].url);
+        }
+    }
+    inputUrls?.value
+        .split("\n")
+        .forEach(url => imageUrls.push(url.trim()));
+    const results = await ocrFromURLs(imageUrls);
     const outputFiles: RawFile[] = results.map((text, name) => ({
         name,
         data: Buffer.from(text)

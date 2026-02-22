@@ -9,6 +9,7 @@ import {
     InteractionType,
     MessageFlags,
     RESTPostAPIApplicationCommandsJSONBody,
+    TextInputStyle,
     ToEventProps
 } from "@discordjs/core";
 import { ApplicationCommandOptions } from "discord-data-resolvers";
@@ -89,16 +90,29 @@ async function bulkCallback(
     await api.interactions.createModal(interaction.id, interaction.token, {
         custom_id: `bulk-image|${Number(show?.value ?? false)}`,
         title: "Upload images",
-        components: [{
-            type: ComponentType.Label,
-            label: "Images",
-            component: {
-                type: ComponentType.FileUpload,
-                custom_id: "bulk-image-input",
-                required: true,
-                max_values: 10
+        components: [
+            {
+                type: ComponentType.Label,
+                label: "Images",
+                component: {
+                    type: ComponentType.FileUpload,
+                    custom_id: "bulk-image-input",
+                    required: false,
+                    max_values: 10
+                }
+            },
+            {
+                type: ComponentType.Label,
+                label: "URLs",
+                component: {
+                    type: ComponentType.TextInput,
+                    custom_id: "bulk-url-input",
+                    style: TextInputStyle.Paragraph,
+                    required: false,
+                    placeholder: "One URL per line"
+                }
             }
-        }]
+        ]
     });
 }
 
