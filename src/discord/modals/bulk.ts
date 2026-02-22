@@ -9,7 +9,8 @@ export const test = createDefaultModalSubmitTest({ pattern: ModalCustomIDPattern
 
 export async function callback({ api, data: interaction }: ToEventProps<APIModalSubmitInteraction>): Promise<void> {
     const match = interaction.data.custom_id.match(ModalCustomIDPattern);
-    await api.interactions.defer(interaction.id, interaction.token, { flags: !parseInt(match!.groups!.show) ? MessageFlags.Ephemeral : undefined });
+    const ephemeral = !parseInt(match!.groups!.show);
+    await api.interactions.defer(interaction.id, interaction.token, { flags: ephemeral ? MessageFlags.Ephemeral : undefined });
     const fields = new ModalSubmitFields(interaction.data.components);
     const inputFiles = fields.get({
         type: ComponentType.FileUpload,
@@ -33,5 +34,13 @@ export async function callback({ api, data: interaction }: ToEventProps<APIModal
         name,
         data: Buffer.from(text)
     }));
-    await api.interactions.editReply(process.env.DISCORD_CLIENT_ID!, interaction.token, { files: outputFiles });
+    await api.interactions.editReply(interaction.application_id, interaction.token, { files: outputFiles.slice(0, 10) });
+    if (outputFiles.length > 10) {
+        for (let i = 10; i < outputFiles.length; i += 10) {
+            await api.interactions.followUp(interaction.application_id, interaction.token, {
+                flags: ephemeral ? MessageFlags.Ephemeral : undefined,
+                files: outputFiles.slice(i, i + 10)
+            });
+        }
+    }
 }
