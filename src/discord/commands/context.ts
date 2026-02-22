@@ -41,7 +41,7 @@ export async function callback({ api, data: interaction }: ToEventProps<APIMessa
         }
     }
     if (!urls.length) {
-        await api.interactions.editReply(process.env.DISCORD_CLIENT_ID!, interaction.token, { content: "No images detected" });
+        await api.interactions.editReply(interaction.application_id, interaction.token, { content: "No images detected" });
         return;
     }
     const results = await ocrFromURLs(urls);
@@ -49,5 +49,5 @@ export async function callback({ api, data: interaction }: ToEventProps<APIMessa
         name,
         data: Buffer.from(text)
     }));
-    await api.interactions.editReply(process.env.DISCORD_CLIENT_ID!, interaction.token, { files: outputFiles });
+    await api.interactions.editReply(interaction.application_id, interaction.token, { files: outputFiles });
 }

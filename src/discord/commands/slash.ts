@@ -146,7 +146,7 @@ async function defaultCallback(
     const results = await ocrFromURLs([url]);
     const name = results.firstKey()!;
     const data = Buffer.from(results.get(name)!);
-    await api.interactions.editReply(process.env.DISCORD_CLIENT_ID!, interaction.token, {
+    await api.interactions.editReply(interaction.application_id, interaction.token, {
         files: [{ name, data }]
     });
 }
