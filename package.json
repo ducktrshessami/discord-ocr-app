@@ -5,19 +5,20 @@
   "type": "module",
   "main": "dist/index.js",
   "repository": "git@github.com:ducktrshessami/discord-ocr-app.git",
-  "author": "ducktrshessami",
+  "author": "ducktrshessami <ducktrshessami@duck.com>",
   "license": "MIT",
   "private": true,
   "scripts": {
     "build": "rm -rf dist/ && tsc",
-    "minify": "node minify.js",
+    "minify": "node minify.mjs",
     "minbuild": "yarn build && yarn minify",
-    "start": "node --env-file-if-exists .env dist/index.js",
-    "deploy": "node --env-file-if-exists .env dist/deploy.js"
+    "start": "node --enable-source-maps --env-file-if-exists .env dist/index.js",
+    "deploy": "node --enable-source-maps --env-file-if-exists .env dist/deploy.js"
   },
   "dependencies": {
     "@discordjs/core": "^2.6.0",
     "discord-data-resolvers": "ducktrshessami/discord-data-resolvers#v0.5.0",
+    "fastest-levenshtein": "^1.0.16",
     "tesseract.js": "^7.0.0",
     "undici": "^8.10.0"
   },

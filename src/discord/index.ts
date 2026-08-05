@@ -1,21 +1,19 @@
-import {
-    ApplicationCommandType,
-    Client,
-    GatewayDispatchEvents,
-    InteractionContextType,
-    InteractionType
-} from "@discordjs/core";
+import { ApplicationCommandType, Client, ComponentType, GatewayDispatchEvents, InteractionContextType, InteractionType } from "@discordjs/core";
 import { REST } from "@discordjs/rest";
 import { WebSocketManager, WebSocketShardEvents } from "@discordjs/ws";
 import { isGuildInteraction } from "discord-api-types/utils";
 import { PRESENCE_INTERVAL } from "../constants.js";
 import commands from "./commands/index.js";
+import components from "./components/index.js";
 import modals from "./modals/index.js";
 import { getPresence } from "./presence.js";
-import { findAsync, isCommandBasedInteraction, isInteractionType } from "./utils/interactions.js";
+import { isCommandBasedInteraction } from "./utils/commands.js";
+import { isInteractionType } from "./utils/interactions.js";
+import { findAsync } from "./utils/misc.js";
 
 const rest = new REST()
     .setToken(process.env.DISCORD_TOKEN!);
+
 const gateway = new WebSocketManager({
     rest,
     intents: 0,
@@ -24,6 +22,7 @@ const gateway = new WebSocketManager({
 })
     .on(WebSocketShardEvents.Debug, logDebug)
     .on(WebSocketShardEvents.Error, console.error);
+
 const client = new Client({ rest, gateway })
     .once(GatewayDispatchEvents.Ready, async ({ shardId, data }) => {
         try {
@@ -54,6 +53,13 @@ const client = new Client({ rest, gateway })
                     else if (isInteractionType(payload, InteractionType.ApplicationCommandAutocomplete) && command.autocomplete) {
                         await command.autocomplete(payload);
                     }
+                }
+            }
+            else if (isInteractionType(payload, InteractionType.MessageComponent)) {
+                const component = await findAsync(components, async component => await component.test(payload));
+                if (component) {
+                    console.log(`[discord] ${userId} used ${ComponentType[payload.data.data!.component_type]} component ${payload.data.data!.custom_id}`);
+                    await component.callback(payload, client);
                 }
             }
             else if (isInteractionType(payload, InteractionType.ModalSubmit)) {

@@ -27,12 +27,12 @@ export const data: RESTPostAPIApplicationCommandsJSONBody = {
 export async function callback({ api, data: interaction }: ToEventProps<APIMessageApplicationCommandInteraction>): Promise<void> {
     await api.interactions.defer(interaction.id, interaction.token, { flags: MessageFlags.Ephemeral });
     const urls: string[] = [];
-    for (const attachment of interaction.data.resolved.messages[interaction.data.target_id].attachments) {
+    for (const attachment of interaction.data.resolved.messages[interaction.data.target_id]!.attachments) {
         if (attachment.content_type?.startsWith("image")) {
             urls.push(attachment.url);
         }
     }
-    for (const embed of interaction.data.resolved.messages[interaction.data.target_id].embeds) {
+    for (const embed of interaction.data.resolved.messages[interaction.data.target_id]!.embeds) {
         if (embed.image) {
             urls.push(embed.image.url);
         }

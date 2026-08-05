@@ -128,7 +128,7 @@ async function defaultCallback(
             name: "image",
             required: true
         });
-        url = interaction.data.resolved!.attachments![image.value].url;
+        url = interaction.data.resolved!.attachments![image.value]!.url;
     }
     else {
         const urlOption = options.get({

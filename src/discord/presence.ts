@@ -4,6 +4,7 @@ import {
     GatewayPresenceUpdateData,
     PresenceUpdateStatus
 } from "@discordjs/core";
+import { randomArrayItem } from "./utils/misc.js";
 
 const activities: GatewayActivityUpdateData[] = [
     {
@@ -16,7 +17,7 @@ const activities: GatewayActivityUpdateData[] = [
 export function getPresence(): GatewayPresenceUpdateData {
     return {
         status: PresenceUpdateStatus.Online,
-        activities: activities.length ? [activities[Math.floor(Math.random() * activities.length)]] : [],
+        activities: activities.length ? [randomArrayItem(activities)] : [],
         afk: false,
         since: null
     };

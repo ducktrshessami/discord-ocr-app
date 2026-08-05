@@ -1,15 +1,15 @@
 import { APIModalSubmitInteraction, ComponentType, MessageFlags, ToEventProps } from "@discordjs/core";
 import { RawFile } from "@discordjs/rest";
 import { ModalSubmitFields } from "discord-data-resolvers";
-import { createDefaultModalSubmitTest } from "../utils/interactions.js";
+import { createDefaultModalSubmitTest } from "../utils/modals.js";
 import { ocrFromURLs } from "../utils/ocr.js";
 
 const ModalCustomIDPattern = /^bulk-image\|(?<show>\d+)$/;
 export const test = createDefaultModalSubmitTest({ pattern: ModalCustomIDPattern });
 
 export async function callback({ api, data: interaction }: ToEventProps<APIModalSubmitInteraction>): Promise<void> {
-    const match = interaction.data.custom_id.match(ModalCustomIDPattern);
-    const ephemeral = !parseInt(match!.groups!.show);
+    const match = interaction.data.custom_id.match(ModalCustomIDPattern)!;
+    const ephemeral = !parseInt(match.groups!.show!);
     await api.interactions.defer(interaction.id, interaction.token, { flags: ephemeral ? MessageFlags.Ephemeral : undefined });
     const fields = new ModalSubmitFields(interaction.data.components);
     const inputFiles = fields.get({
@@ -23,7 +23,7 @@ export async function callback({ api, data: interaction }: ToEventProps<APIModal
     const imageUrls: string[] = [];
     if (inputFiles) {
         for (const attachmentId of inputFiles.values) {
-            imageUrls.push(interaction.data.resolved!.attachments![attachmentId].url);
+            imageUrls.push(interaction.data.resolved!.attachments![attachmentId]!.url);
         }
     }
     inputUrls?.value
