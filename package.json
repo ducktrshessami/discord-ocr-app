@@ -16,18 +16,18 @@
     "deploy": "node --env-file-if-exists .env dist/deploy.js"
   },
   "dependencies": {
-    "@discordjs/core": "^2.4.0",
-    "discord-data-resolvers": "ducktrshessami/discord-data-resolvers#v0.3.0",
+    "@discordjs/core": "^2.6.0",
+    "discord-data-resolvers": "ducktrshessami/discord-data-resolvers#v0.5.0",
     "tesseract.js": "^7.0.0",
-    "undici": "^7.22.0"
+    "undici": "^8.10.0"
   },
   "optionalDependencies": {
     "bufferutil": "^4.1.0",
     "zlib-sync": "^0.1.10"
   },
   "devDependencies": {
-    "@types/node": "^25.2.3",
+    "@types/node": "^26.1.2",
     "minify": "^9.2.0",
-    "typescript": "^5.9.3"
+    "typescript": "^7.0.2"
   }
 }
