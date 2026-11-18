@@ -1,6 +1,6 @@
 {
   "name": "discord-ocr-app",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A user-app for recognizing text in images with Tesseract",
   "type": "module",
   "main": "dist/index.js",
