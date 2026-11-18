@@ -16,18 +16,18 @@
     "deploy": "node --enable-source-maps --env-file-if-exists .env dist/deploy.js"
   },
   "dependencies": {
-    "@discordjs/core": "^2.6.0",
+    "@discordjs/core": "^2.7.0",
     "discord-data-resolvers": "ducktrshessami/discord-data-resolvers#v0.5.0",
     "fastest-levenshtein": "^1.0.16",
     "tesseract.js": "^7.0.0",
-    "undici": "^8.10.0"
+    "undici": "^8.12.4"
   },
   "optionalDependencies": {
     "bufferutil": "^4.1.0",
     "zlib-sync": "^0.1.10"
   },
   "devDependencies": {
-    "@types/node": "^26.1.2",
+    "@types/node": "^26.6.6",
     "minify": "^9.2.0",
     "typescript": "^7.0.2"
   }
